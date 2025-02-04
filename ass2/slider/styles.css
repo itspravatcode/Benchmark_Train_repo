@@ -1,0 +1,84 @@
+/* General Styles */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+.image img {
+    max-width: 90%;
+    height: auto;
+    transition: opacity 0.5s ease-in-out;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Custom Button Styling */
+.custom-btn {
+    background-color: #0066cc;
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.custom-btn:hover {
+    background-color: #004c99;
+    transform: scale(1.05);
+}
+
+.custom-btn:focus {
+    outline: none;
+    box-shadow: 0 0 8px #004c99;
+}
+
+/* Media Queries */
+@media (max-width: 992px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .container {
+        width: 75%;
+    }
+
+    .image img {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .container {
+        width: 90%;
+    }
+
+    .btn-group .btn {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn-group .btn {
+        font-size: 0.8rem;
+    }
+
+    .image img {
+        border-radius: 8px;
+    }
+}
