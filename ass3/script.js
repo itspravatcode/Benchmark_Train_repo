@@ -1,3 +1,5 @@
+import { getAllTodos, deleteTodo, addTodo, updateTodo, deleteAllTodos } from './manageTodos.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const inputTodo = document.getElementById("input-todo");
   const buttonTodo = document.getElementById("button-todo");
@@ -5,144 +7,92 @@ document.addEventListener("DOMContentLoaded", () => {
   const ulTodo = document.getElementById("ul-todo");
   const deleteAllButton = document.getElementById("btn-delete-all");
 
-  buttonTodo.addEventListener("click", () => {
-    const text = inputTodo.value.trim();
-    if (text) {
-      createTodo(text);
-      inputTodo.value = "";
-      saveTodos();
-    }
-  });
-
-  fetchButton.addEventListener("click", async () => {
-    try {
-      const response = await axios.get("https://jsonplaceholder.typicode.com/todos?_limit=1");
-      const tasks = response.data;
-
-      tasks.forEach(task => createTodo(task.title));
-      saveTodos();
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  });
+  let editMode = false;
+  let editElement = null;
 
   const createTodo = (task) => {
     const li = document.createElement("li");
-    li.className = "list-group-item d-flex justify-content-between align-items-center draggable";
-    li.draggable = true;
-    li.innerHTML = `<span>${task}</span>
+    li.id = task.id;
+    li.className = "list-group-item d-flex justify-content-between align-items-center";
+    li.innerHTML = `
+      <span class="text-todo">${task.title}</span>
+      <input type="text" class="form-control d-none edit-todo" id="edit-todo" />
       <div>
-        <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-        <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-      </div>`;
+        <button class="btn btn-sm btn-warning">Edit</button>
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </div>
+    `;
     ulTodo.appendChild(li);
     deleteAllButton.style.display = "block";
-    saveTodos();
-    addDragAndDrop();
   };
+
+  const loadAllTodos = async () => {
+    const allTodos = await getAllTodos(7);
+    allTodos.forEach(task => createTodo(task));
+  };
+
+  const deleteAllTodo = async () => {
+    if (confirm("Are you sure you want to delete all tasks?")) {
+      const res = await deleteAllTodos(ulTodo.children);
+      ulTodo.innerHTML = "";
+      alert(res);
+    }
+  };
+
+  const updateTodoEl = async (e) => {
+    const li = e.target.closest(".list-group-item");
+    const taskTextEl = li.querySelector(".text-todo");
+    const editTaskEl = li.querySelector(".edit-todo");
+    const oldTaskText = taskTextEl.textContent;
+
+    if (e.target.textContent === "Edit") {
+      taskTextEl.classList.add("d-none");
+      editTaskEl.classList.remove("d-none");
+      editTaskEl.value = oldTaskText;
+      editTaskEl.focus();
+      e.target.textContent = "Update";
+    } else {
+      const newTaskText = editTaskEl.value;
+      editTaskEl.classList.add("d-none");
+      taskTextEl.classList.remove("d-none");
+      taskTextEl.textContent = newTaskText;
+      e.target.textContent = "Edit";
+      const res = await updateTodo(li.id, oldTaskText, newTaskText);
+      alert(res);
+    }
+  };
+
+  const addNewTask = async () => {
+    const text = inputTodo.value.trim();
+    if (!text) return;
+
+    if (editMode) {
+      editElement.querySelector(".text-todo").textContent = text;
+      editMode = false;
+      editElement = null;
+      buttonTodo.textContent = "Add";
+    } else {
+      createTodo({ id: ulTodo.children.length, title: text });
+      const res = await addTodo(text);
+      alert(res);
+    }
+
+    inputTodo.value = "";
+  };
+
+  buttonTodo.addEventListener("click", addNewTask);
+  fetchButton.addEventListener("click", loadAllTodos);
+  deleteAllButton.addEventListener("click", deleteAllTodo);
 
   ulTodo.addEventListener("click", (e) => {
-    const li = e.target.closest(".list-group-item");
-    if (!li) return;
-
-    if (e.target.classList.contains("delete-btn")) {
+    if (e.target.classList.contains("btn-danger")) {
+      const li = e.target.closest(".list-group-item");
+      deleteTodo(li.id);
       li.remove();
-      saveTodos();
     }
 
-    if (e.target.classList.contains("edit-btn")) {
-      const span = li.querySelector("span");
-      const input = document.createElement("input");
-      input.type = "text";
-      input.value = span.textContent;
-      input.className = "form-control form-control-sm";
-      li.replaceChild(input, span);
-
-
-      const deleteBtn = li.querySelector(".delete-btn");
-      const editBtn = li.querySelector(".edit-btn");
-      editBtn.textContent = "Save";
-      deleteBtn.style.display = "none";
-      
-      input.focus();
-
-      input.addEventListener("blur", () => saveEdit(input, span, li, editBtn, deleteBtn));
-      input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") saveEdit(input, span, li, editBtn, deleteBtn);
-      });
+    if (e.target.classList.contains("btn-warning")) {
+      updateTodoEl(e);
     }
   });
-
-  const saveEdit = (input, span, li, editBtn, deleteBtn) => {
-    const newText = input.value.trim();
-    if (newText) {
-      span.textContent = newText;
-      li.replaceChild(span, input);
-      editBtn.textContent = "Edit"; 
-      deleteBtn.style.display = "inline-block"; 
-      saveTodos();
-    } else {
-      li.remove();
-      saveTodos();
-    }
-  };
-
-  deleteAllButton.addEventListener("click", () => {
-    if (confirm("Delete all tasks?")) {
-      ulTodo.innerHTML = "";
-      localStorage.removeItem("todos");
-      deleteAllButton.style.display = "none";
-    }
-  });
-
-  const saveTodos = () => {
-    const todos = [...document.querySelectorAll(".list-group-item span")].map(task => task.textContent);
-    localStorage.setItem("todos", JSON.stringify(todos));
-    deleteAllButton.style.display = todos.length ? "block" : "none";
-  };
-
-  const loadTodos = () => {
-    const todos = JSON.parse(localStorage.getItem("todos")) || [];
-    todos.forEach(task => createTodo(task));
-    addDragAndDrop();
-  };
-
-  const addDragAndDrop = () => {
-    const listItems = document.querySelectorAll(".draggable");
-    listItems.forEach((item) => {
-      item.addEventListener("dragstart", () => {
-        item.classList.add("dragging");
-      });
-      item.addEventListener("dragend", () => {
-        item.classList.remove("dragging");
-        saveTodos();
-      });
-    });
-
-    ulTodo.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      const draggingItem = document.querySelector(".dragging");
-      const afterElement = getDragAfterElement(ulTodo, e.clientY);
-      if (afterElement == null) {
-        ulTodo.appendChild(draggingItem);
-      } else {
-        ulTodo.insertBefore(draggingItem, afterElement);
-      }
-    });
-  };
-
-  const getDragAfterElement = (container, y) => {
-    const draggableElements = [...container.querySelectorAll(".draggable:not(.dragging)")];
-    return draggableElements.reduce((closest, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = y - box.top - box.height / 2;
-      if (offset < 0 && offset > closest.offset) {
-        return { offset, element: child };
-      } else {
-        return closest;
-      }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
-  };
-
-  loadTodos();
 });
