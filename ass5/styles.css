@@ -1,0 +1,41 @@
+.card {
+  height: 100%;
+  border-radius: 0.5rem;
+}
+
+.card-img-top {
+  max-height: 150px;
+  object-fit: contain;
+  padding: 10px;
+  width: 100%;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.card-text {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.btn {
+  font-size: 0.9rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  text-transform: capitalize;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  display: inline-block;
+}
