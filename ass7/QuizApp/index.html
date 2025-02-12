@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./src/style.css">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div id="quiz" class="text-center">
+        <h2 id="question-display" class="mb-4"></h2>
+        <div id="answer-buttons" class="d-flex flex-column gap-3"></div>
+        <p id="current-score" class="mt-4 fw-bold">Score: 0</p>
+        <p id="high-score" class="fw-bold">High Score: 0</p>
+        <button id="next-question" class="btn btn-primary mt-3 hidden">Next Question</button>
+        <p id="quiz-status" class="mt-4 fw-bold hidden"></p>
+        <button id="restart-quiz" class="btn btn-success hidden">Give Quiz Again</button>
+      </div>
+    </div>
+        <script src="./src/main.ts" type="module"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+      </body>
+    </html>
+
+</html>
