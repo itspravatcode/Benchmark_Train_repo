@@ -1,5 +1,3 @@
-Below is a detailed walkthrough of common Spring questions in a single markdown file. You’ll find answers to nine topics, including Dependency Injection, bean conflicts, IoC lifecycle, injection types, stereotypes, custom bean definitions, missing annotations, profiles, and component scanning versus auto‑configuration.
-
 1\. What is Dependency Injection in Spring, and how is it different from regular object creation using new?
 -----------------------------------------------------------------------------------------------------------
 
