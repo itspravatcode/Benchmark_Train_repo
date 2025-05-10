@@ -1,0 +1,43 @@
+
+ol{
+    display: flex;
+    gap: 10px;
+    background-color: antiquewhite;
+    height: 50px;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    
+}
+
+ol li{
+    text-decoration: none;
+    list-style: none;
+
+}
+
+.collage-link-container{
+    display: flex;
+    gap: 10px;
+    background-color: azure;
+    height: 50px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.active-link {
+    font-weight: bold;
+    color: red;
+  }
+  
+.Footer-Container{
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
